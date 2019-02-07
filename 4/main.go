@@ -16,8 +16,6 @@ func main() {
 	num3 := []int{
 		1, 9, 11, 13, 100,
 	}
-	log.Println(findMedianSortedArraysTest(num1, num2))
-	log.Println(findMedianSortedArraysTest(num1, num3))
 
 	{
 		res := processOne(num1, 4)
@@ -40,8 +38,8 @@ func main() {
 
 	{
 		res := processOne(num3, 0)
-		if res != 10 {
-			log.Fatalf("Expected res == 10 but Got %v", res)
+		if res != 9 {
+			log.Fatalf("Expected res == 9 but Got %v", res)
 		}
 	}
 	{
@@ -52,8 +50,8 @@ func main() {
 	}
 	{
 		res := processOne(num3, 10)
-		if res != 10.5 {
-			log.Fatalf("Expected res == 10.5 but Got %v", res)
+		if res != 10 {
+			log.Fatalf("Expected res == 10 but Got %v", res)
 		}
 	}
 	{
@@ -76,102 +74,17 @@ func main() {
 		log.Println(findMedianSortedArrays(A, B))
 		log.Println(findMedianSortedArraysTest(A, B))
 	}
-
-}
-
-func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-
-	mid1 := getMid(nums1)
-	mid2 := getMid(nums2)
-	log.Printf("%v(%v) %v(%v)", nums1, mid1, nums2, mid2)
-
-	if len(nums1) == 0 {
-		return mid2
-	}
-	if len(nums2) == 0 {
-		return mid1
-	}
-
-	if mid1 == mid2 {
-		return mid1
-	}
-
-	s1Len := len(nums1)
-	s2Len := len(nums2)
-	minLen := s1Len
-	if s2Len < minLen {
-		minLen = s2Len
-	}
-	cutLen := minLen / 2
-
-	if s1Len == 1 {
-		return processOne(nums2, nums1[0])
-	} else if s2Len == 1 {
-		return processOne(nums1, nums2[0])
-	} else {
-		if mid1 < mid2 {
-			nums1 = nums1[cutLen:]
-			nums2 = nums2[:s2Len-cutLen]
-		} else {
-			nums1 = nums1[:s1Len-cutLen]
-			nums2 = nums2[cutLen:]
+	{
+		A := []int{
+			1,
 		}
-		return findMedianSortedArrays(nums1, nums2)
-	}
-}
-
-func getMid(num []int) float64 {
-	lenNum := len(num)
-	if lenNum == 0 {
-		return 0
-	}
-	if lenNum%2 == 0 {
-		return (float64(num[lenNum/2]) + float64(num[lenNum/2-1])) / 2
-	} else {
-		return float64(num[lenNum/2])
-	}
-}
-
-func processOne(num []int, v int) float64 {
-	lenNum := len(num)
-	if lenNum == 0 {
-		return float64(v)
-	} else if lenNum == 1 {
-		return (float64(num[0]) + float64(v)) / 2
-	} else if lenNum%2 == 0 {
-		leftMid := num[lenNum/2-1]
-		rightMid := num[lenNum/2]
-		/*log.Printf("leftMid:%v, rightMid:%v, v:%v",
-			leftMid, rightMid, v)*/
-		if v < leftMid {
-			return float64(leftMid)
-		} else if v > rightMid {
-			return float64(rightMid)
-		} else {
-			return float64(v)
+		B := []int{
+			2, 3, 4,
 		}
-	} else {
-
-		p1, p2 := 0, 0
-		L := num[lenNum/2-1]
-		M := num[lenNum/2]
-		R := num[lenNum/2+1]
-
-		/*log.Printf("L:%v, M:%v, R:%v, v:%v",
-			L, M, R, v)*/
-
-		if v < L {
-			p1 = L
-			p2 = M
-		} else if v > R {
-			p1 = M
-			p2 = R
-		} else {
-			p1 = M
-			p2 = v
-		}
-		return (float64(p1) + float64(p2)) / 2
+		log.Println(findMedianSortedArrays(A, B))
+		log.Println(findMedianSortedArraysTest(A, B))
 	}
+
 }
 
 func findMedianSortedArraysTest(nums1 []int, nums2 []int) float64 {
@@ -195,4 +108,176 @@ func findMedianSortedArraysTest(nums1 []int, nums2 []int) float64 {
 	}
 
 	return 0
+}
+
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	lenAll := len(nums1) + len(nums2)
+	if lenAll%2 != 0 {
+		return findMedianSortedArraysLeft(nums1, nums2)
+	} else {
+		l := findMedianSortedArraysLeft(nums1, nums2)
+		r := findMedianSortedArraysRight(nums1, nums2)
+		return (l + r) / 2.0
+	}
+
+}
+
+func findMedianSortedArraysLeft(nums1 []int, nums2 []int) float64 {
+
+	mid1 := getMid(nums1)
+	mid2 := getMid(nums2)
+	log.Printf("Left: %v(%v) %v(%v)", nums1, mid1, nums2, mid2)
+
+	if len(nums1) == 0 {
+		return float64(mid2)
+	}
+	if len(nums2) == 0 {
+		return float64(mid1)
+	}
+
+	if mid1 == mid2 {
+		return float64(mid1)
+	}
+
+	s1Len := len(nums1)
+	s2Len := len(nums2)
+	minLen := s1Len
+	if s2Len < minLen {
+		minLen = s2Len
+	}
+	cutLen := minLen / 2
+
+	if s1Len == 1 {
+		return float64(processOne(nums2, nums1[0]))
+	} else if s2Len == 1 {
+		return float64(processOne(nums1, nums2[0]))
+	} else {
+		if mid1 < mid2 {
+			nums1 = nums1[cutLen:]
+			nums2 = nums2[:s2Len-cutLen]
+		} else {
+			nums1 = nums1[:s1Len-cutLen]
+			nums2 = nums2[cutLen:]
+		}
+		return findMedianSortedArraysLeft(nums1, nums2)
+	}
+}
+
+func getMid(num []int) int {
+	lenNum := len(num)
+	if lenNum == 0 {
+		return 0
+	}
+	if lenNum%2 == 0 {
+		return num[lenNum/2-1]
+	} else {
+		return num[lenNum/2]
+	}
+}
+
+//up mid
+func processOne(num []int, v int) int {
+	lenNum := len(num)
+	if lenNum == 0 {
+		return v
+	} else if lenNum == 1 {
+		if v < num[0] {
+			return v
+		} else {
+			return num[0]
+		}
+	} else {
+		leftIndex := lenNum/2 - 1
+		rightIndex := lenNum / 2
+		if v < num[leftIndex] {
+			return num[leftIndex]
+		} else if v > num[rightIndex] {
+			return num[rightIndex]
+		} else {
+			return v
+		}
+	}
+}
+
+func findMedianSortedArraysRight(nums1 []int, nums2 []int) float64 {
+
+	mid1 := getMidRight(nums1)
+	mid2 := getMidRight(nums2)
+	log.Printf("Right: %v(%v) %v(%v)", nums1, mid1, nums2, mid2)
+
+	if len(nums1) == 0 {
+		return float64(mid2)
+	}
+	if len(nums2) == 0 {
+		return float64(mid1)
+	}
+
+	if mid1 == mid2 {
+		return float64(mid1)
+	}
+
+	s1Len := len(nums1)
+	s2Len := len(nums2)
+	minLen := s1Len
+	if s2Len < minLen {
+		minLen = s2Len
+	}
+	cutLen := minLen / 2
+
+	if s1Len == 1 {
+		return float64(processOneRight(nums2, nums1[0]))
+	} else if s2Len == 1 {
+		return float64(processOneRight(nums1, nums2[0]))
+	} else {
+		if mid1 < mid2 {
+			nums1 = nums1[cutLen:]
+			nums2 = nums2[:s2Len-cutLen]
+		} else {
+			nums1 = nums1[:s1Len-cutLen]
+			nums2 = nums2[cutLen:]
+		}
+		return findMedianSortedArraysRight(nums1, nums2)
+	}
+}
+
+func getMidRight(num []int) int {
+	lenNum := len(num)
+	if lenNum == 0 {
+		return 0
+	}
+	return num[lenNum/2]
+}
+
+//up mid
+func processOneRight(num []int, v int) int {
+	lenNum := len(num)
+	if lenNum == 0 {
+		return v
+	} else if lenNum == 1 {
+		if v > num[0] {
+			return v
+		} else {
+			return num[0]
+		}
+	} else if lenNum%2 == 0 {
+		leftIndex := lenNum/2 - 1
+		rightIndex := lenNum / 2
+		if v < num[leftIndex] {
+			return num[leftIndex]
+		} else if v > num[rightIndex] {
+			return num[rightIndex]
+		} else {
+			return v
+		}
+	} else {
+		leftIndex := lenNum / 2
+		rightIndex := lenNum/2 + 1
+		if v < num[leftIndex] {
+			return num[leftIndex]
+		} else if v > num[rightIndex] {
+			return num[rightIndex]
+		} else {
+			return v
+		}
+	}
 }
