@@ -8,6 +8,7 @@ func main() {
 	convert(s, 4)
 
 	convertV2(s, 4)
+	convertV2("A", 1)
 }
 
 func convert(s string, numRows int) string {
@@ -65,6 +66,9 @@ func convert(s string, numRows int) string {
 func convertV2(s string, numRows int) string {
 	totalLen := len(s)
 	unitLen := 2 * (numRows - 1)
+	if unitLen == 0 {
+		unitLen = 1
+	}
 	res := ""
 	for row := 0; row < numRows; row++ {
 		if row == 0 || row == numRows-1 {
@@ -87,6 +91,6 @@ func convertV2(s string, numRows int) string {
 			}
 		}
 	}
-	log.Printf("[convertV2] res:%v", res)
-	return ""
+	log.Printf("res:%v", res)
+	return res
 }

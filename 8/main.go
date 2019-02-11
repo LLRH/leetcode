@@ -30,6 +30,11 @@ func main() {
 		res := myAtoi("-91283472322")
 		log.Printf("res:%v", res)
 	}
+
+	{
+		res := myAtoi("9223372036854775808")
+		log.Printf("res:%v", res)
+	}
 }
 
 func myAtoi(str string) int {
@@ -49,6 +54,10 @@ func myAtoi(str string) int {
 	if len(str) == 0 {
 		return 0
 	}
+
+	min := (-1) * (1 << 31)
+	max := 1<<31 - 1
+
 	numSet := map[byte]int{
 		'0': 0,
 		'1': 1,
@@ -66,19 +75,19 @@ func myAtoi(str string) int {
 		if value, ok := numSet[str[0]]; ok {
 			res = res*10 + value
 			str = str[1:]
+
+			if res*neg < min {
+				return min
+			}
+			if res*neg > max {
+				return max
+			}
 		} else {
 			break
 		}
 	}
 
-	res = res * neg
-	min := (-1) * (1 << 31)
-	if res < min {
-		return min
-	}
-	max := 1<<31 - 1
-	if res > max {
-		return max
-	}
-	return res
+	log.Printf("res:%v, neg:%v", res, neg)
+
+	return res * neg
 }
