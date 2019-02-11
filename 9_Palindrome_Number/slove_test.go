@@ -1,8 +1,8 @@
 package __Palindrome_Number
 
 import (
-	"testing"
 	"leetcode.com/common"
+	"testing"
 )
 
 func TestSolve(t *testing.T) {
