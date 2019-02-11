@@ -39,7 +39,7 @@ func main() {
 	{
 		res := processOne(num3, 0)
 		if res != 9 {
-			log.Fatalf("Expected res == 9 but Got %v", res)
+			log.Fatalf("Expected res == 9.Palindrome Number but Got %v", res)
 		}
 	}
 	{
